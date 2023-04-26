@@ -19,7 +19,7 @@
 Как запустить проект:
 1. Клонировать репозиторий и перейти в него в командной строке:
 
-```git clone https://github.com/Ilya-Lukashkin/api_final_yatube.git```
+```git clone https://github.com/RV369/api_yamdb```
 
 либо (в случае проблем с клонированием проекта) 
 зайдя на страницу проекта нажать на кнопку 
@@ -28,13 +28,13 @@ Code -> Download ZIP и скачать проект в формате .zip
 
 2. Через терминал перейти в папку с проектом:
 
-```cd api_final_yatube-master```
+```cd api_yamdb```
 
 3. Cоздать и активировать виртуальное окружение:
 
 ```python -m venv env```
 
-```source env/bin/activate```
+```source venv/Scripts/activate```
 
 4. Обновить версию pip(при необходимости) и установить зависимости из файла requirements.txt:
 
@@ -42,11 +42,11 @@ Code -> Download ZIP и скачать проект в формате .zip
 
 ```pip install -r requirements.txt```
 
-5. Установить и подключить две библиотеки Djoser и Simple JWT.
+5. Установить и подключить библиотеку Simple JWT.
 
-5.1. Установка библиотек с помощью команды:
+5.1. Установка библиотеки с помощью команды:
 
-```pip install djoser djangorestframework-simplejwt==4.7.2```
+```pip install djangorestframework-simplejwt==5.1.0```
 
 5.2. Подключение библиотеки в файле settings.py обязательно в указанном ниже порядке:
 
@@ -57,8 +57,6 @@ Code -> Download ZIP и скачать проект в формате .zip
 ...                   
 
 ```    'rest_framework',```
-
-```    'djoser',)```
 
 5.3. Добавление настроек к библиотеке в файле settings.py:
 
@@ -92,7 +90,7 @@ Code -> Download ZIP и скачать проект в формате .zip
 
 6. Перейти в рабочую папку и выполнить миграции:
 
-```cd yatube_api```
+```cd api_yamdb```
 
 ```python manage.py migrate```
 
