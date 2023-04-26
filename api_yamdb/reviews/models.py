@@ -24,20 +24,20 @@ class User(AbstractUser):
         max_length=150,
         unique=True,
         blank=False,
-        null=False
+        null=False,
     )
     email = models.EmailField(
         max_length=254,
         unique=True,
         blank=False,
-        null=False
+        null=False,
     )
     role = models.CharField(
         'роль',
         max_length=20,
         choices=ROLE_CHOICES,
         default=USER,
-        blank=True
+        blank=True,
     )
     bio = models.TextField(
         'биография',
@@ -46,19 +46,19 @@ class User(AbstractUser):
     first_name = models.CharField(
         'имя',
         max_length=150,
-        blank=True
+        blank=True,
     )
     last_name = models.CharField(
         'фамилия',
         max_length=150,
-        blank=True
+        blank=True,
     )
     confirmation_code = models.CharField(
         'код подтверждения',
         max_length=255,
         null=True,
         blank=False,
-        default='XXXX'
+        default='XXXX',
     )
 
     @property
@@ -86,7 +86,7 @@ class User(AbstractUser):
 def post_save(sender, instance, created, **kwargs):
     if created:
         confirmation_code = default_token_generator.make_token(
-            instance
+            instance,
         )
         instance.confirmation_code = confirmation_code
         instance.save()
@@ -96,12 +96,12 @@ class Categories(models.Model):
     name = models.CharField(
         unique=True,
         verbose_name='имя категории',
-        max_length=256
+        max_length=256,
     )
     slug = models.SlugField(
         unique=True,
         max_length=50,
-        db_index=True
+        db_index=True,
     )
 
     class Meta:
@@ -116,14 +116,14 @@ class Genres(models.Model):
     name = models.CharField(
         unique=True,
         verbose_name='Жанр',
-        max_length=256
+        max_length=256,
     )
 
     slug = models.SlugField(
         'cлаг жанра',
         unique=True,
         max_length=50,
-        db_index=True
+        db_index=True,
     )
 
     class Meta:
@@ -138,11 +138,11 @@ class Title(models.Model):
     name = models.CharField(
         'название',
         max_length=200,
-        db_index=True
+        db_index=True,
     )
     year = models.IntegerField(
         'год',
-        validators=(validate_year, )
+        validators=(validate_year,),
     )
     category = models.ForeignKey(
         Categories,
@@ -150,18 +150,18 @@ class Title(models.Model):
         related_name='titles',
         verbose_name='категория',
         null=True,
-        blank=True
+        blank=True,
     )
     description = models.TextField(
         'описание',
         max_length=255,
         null=True,
-        blank=True
+        blank=True,
     )
     genre = models.ManyToManyField(
         Genres,
         related_name='titles',
-        verbose_name='жанр'
+        verbose_name='жанр',
     )
 
     class Meta:
@@ -177,13 +177,13 @@ class TitleGenre(models.Model):
         Title,
         null=True,
         blank=True,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     genre_id = models.ForeignKey(
         Genres,
         null=True,
         blank=True,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
 
     class Meta:
@@ -203,7 +203,7 @@ class Review(models.Model):
         db_constraint=False,
     )
     text = models.CharField(
-        max_length=200
+        max_length=200,
     )
     author = models.ForeignKey(
         User,
@@ -216,14 +216,14 @@ class Review(models.Model):
         'оценка',
         validators=(
             MinValueValidator(1),
-            MaxValueValidator(10)
+            MaxValueValidator(10),
         ),
-        error_messages={'validators': 'Оценка от 1 до 10!'}
+        error_messages={'validators': 'Оценка от 1 до 10!'},
     )
     pub_date = models.DateTimeField(
         'дата публикации',
         auto_now_add=True,
-        db_index=True
+        db_index=True,
     )
 
     class Meta:
@@ -231,9 +231,10 @@ class Review(models.Model):
         verbose_name_plural = 'Отзывы'
         constraints = [
             models.UniqueConstraint(
-                fields=('title', 'author', ),
-                name='unique review'
-            )]
+                fields=('title', 'author'),
+                name='unique review',
+            ),
+        ]
         ordering = ('pub_date',)
 
     def __str__(self):
@@ -245,11 +246,11 @@ class Comment(models.Model):
         Review,
         on_delete=models.CASCADE,
         related_name='comments',
-        verbose_name='отзыв'
+        verbose_name='отзыв',
     )
     text = models.CharField(
         'текст комментария',
-        max_length=200
+        max_length=200,
     )
     author = models.ForeignKey(
         User,
@@ -261,7 +262,7 @@ class Comment(models.Model):
     pub_date = models.DateTimeField(
         'дата публикации',
         auto_now_add=True,
-        db_index=True
+        db_index=True,
     )
 
     class Meta:
