@@ -118,7 +118,7 @@ class Genres(models.Model):
         verbose_name='Жанр',
         max_length=256
     )
-        
+
     slug = models.SlugField(
         'cлаг жанра',
         unique=True,
