@@ -19,25 +19,23 @@ from reviews.models import User
 @permission_classes([AllowAny])
 def get_sugnup(request):
     serializer = serializers.SignUpSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        try:
-            user, _ = User.objects.get_or_create(**serializer.validated_data)
-        except IntegrityError:
-            raise ValidationError(
-                'Email уже занят',
-                status.HTTP_400_BAD_REQUEST,
-            )
-        confirmation_code = default_token_generator.make_token(user)
-        send_mail(
-            'Код подтвкрждения',
-            confirmation_code,
-            settings.DEFAULT_FROM_EMAIL,
-            [serializer.validated_data.get('email')],
-            fail_silently=False,
+    serializer.is_valid(raise_exception=True)
+    try:
+        user, _ = User.objects.get_or_create(**serializer.validated_data)
+    except IntegrityError:
+        raise ValidationError(
+            'Email уже занят',
+            status.HTTP_400_BAD_REQUEST,
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    confirmation_code = default_token_generator.make_token(user)
+    send_mail(
+        'Код подтвкрждения',
+        confirmation_code,
+        settings.DEFAULT_FROM_EMAIL,
+        [serializer.validated_data.get('email')],
+        fail_silently=False,
+    )
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

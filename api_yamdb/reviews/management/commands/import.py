@@ -1,5 +1,6 @@
 import csv
 
+from api_yamdb.settings import PATH
 from django.core.management.base import BaseCommand
 from reviews.models import (
     Categories,
@@ -11,33 +12,33 @@ from reviews.models import (
     User,
 )
 
-command = 'start'
-
-FILES_DATA = (
-    'category.csv',
-    'genre.csv',
-    'titles.csv',
-    'genre_title.csv',
-    'users.csv',
-    'review.csv',
-    'comments.csv',
-)
+COMMAND_TO_IMPORT = 'start'
 
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument(command)
+        parser.add_argument(COMMAND_TO_IMPORT)
 
     def handle(self, *args, **kwargs):
-        for name_file_csv in FILES_DATA:
+        csv_model = {
+            'category.csv': Categories,
+            'genre.csv': Genres,
+            'titles.csv': Title,
+            'genre_title.csv': TitleGenre,
+            'users.csv': User,
+            'review.csv': Review,
+            'comments.csv': Comment,
+        }
+        for key in csv_model.keys():
             with open(
-                'C:\\Dev\\data\\' + name_file_csv, encoding='utf-8',
+                (f'{PATH}\\{key}'),
+                encoding='utf-8',
             ) as csvfile:
                 contents = csv.DictReader(csvfile)
-
                 for row in contents:
-                    if name_file_csv == 'users.csv':
-                        new_user = User(
+                    record = []
+                    if key == 'users.csv':
+                        record = csv_model[key](
                             username=row['username'],
                             email=row['email'],
                             role=row['role'],
@@ -45,34 +46,38 @@ class Command(BaseCommand):
                             first_name=row['first_name'],
                             last_name=row['last_name'],
                         )
-                        new_user.save()
-                    elif name_file_csv == 'category.csv':
-                        new_category = Categories(
-                            id=row['id'], name=row['name'], slug=row['slug'],
+                        record.save()
+                    elif key == 'category.csv':
+                        record = csv_model[key](
+                            id=row['id'],
+                            name=row['name'],
+                            slug=row['slug'],
                         )
-                        new_category.save()
-                    elif name_file_csv == 'genre.csv':
-                        new_genre = Genres(
-                            id=row['id'], name=row['name'], slug=row['slug'],
+                        record.save()
+                    elif key == 'genre.csv':
+                        record = csv_model[key](
+                            id=row['id'],
+                            name=row['name'],
+                            slug=row['slug'],
                         )
-                        new_genre.slug = ''.join(new_genre.slug)
-                        new_genre.save()
-                    elif name_file_csv == 'genre_title.csv':
-                        new_genre_title = TitleGenre(
+                        record.slug = ''.join(record.slug)
+                        record.save()
+                    elif key == 'genre_title.csv':
+                        record = csv_model[key](
                             title_id_id=row['title_id'],
                             genre_id_id=row['genre_id'],
                         )
-                        new_genre_title.save()
-                    elif name_file_csv == 'titles.csv':
-                        new_title = Title(
+                        record.save()
+                    elif key == 'titles.csv':
+                        record = csv_model[key](
                             id=row['id'],
                             name=row['name'],
                             year=row['year'],
                             category_id=row['category'],
                         )
-                        new_title.save()
-                    elif name_file_csv == 'review.csv':
-                        new_review = Review(
+                        record.save()
+                    elif key == 'review.csv':
+                        record = csv_model[key](
                             id=row['id'],
                             title_id=row['title_id'],
                             text=row['text'],
@@ -80,15 +85,14 @@ class Command(BaseCommand):
                             score=row['score'],
                             pub_date=row['pub_date'],
                         )
-                        new_review.save()
-                    elif name_file_csv == 'comments.csv':
-                        new_comment = Comment(
+                        record.save()
+                    elif key == 'comments.csv':
+                        record = csv_model[key](
                             id=row['id'],
                             review_id=row['review_id'],
                             text=row['text'],
                             author_id=row['author'],
                             pub_date=row['pub_date'],
                         )
-                        new_comment.save()
-
-            print('Данные загружены успешно!')
+                        record.save()
+            self.stdout.write(self.style.SUCCESS('Данные загружены успешно!'))

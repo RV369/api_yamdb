@@ -7,34 +7,32 @@ from django.dispatch import receiver
 
 from .validators import validate_username, validate_year
 
-USER = 'user'
-ADMIN = 'admin'
-MODERATOR = 'moderator'
-
-ROLE_CHOICES = [
-    (USER, USER),
-    (ADMIN, ADMIN),
-    (MODERATOR, MODERATOR),
-]
+MINIMAL_VALID = 1
+MAXIMAL_VALID = 10
+LEN_TEXT = 15
 
 
 class User(AbstractUser):
+    USER = 'user'
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+    ROLE_CHOICES = [
+        (USER, USER),
+        (ADMIN, ADMIN),
+        (MODERATOR, MODERATOR),
+    ]
     username = models.CharField(
         validators=(validate_username,),
         max_length=150,
         unique=True,
-        blank=False,
-        null=False,
     )
     email = models.EmailField(
         max_length=254,
         unique=True,
-        blank=False,
-        null=False,
     )
     role = models.CharField(
         'роль',
-        max_length=20,
+        max_length=100,
         choices=ROLE_CHOICES,
         default=USER,
         blank=True,
@@ -57,21 +55,20 @@ class User(AbstractUser):
         'код подтверждения',
         max_length=255,
         null=True,
-        blank=False,
         default='XXXX',
     )
 
     @property
     def is_user(self):
-        return self.role == USER
+        return self.role == self.USER
 
     @property
     def is_admin(self):
-        return self.role == ADMIN
+        return self.role == self.ADMIN
 
     @property
     def is_moderator(self):
-        return self.role == MODERATOR
+        return self.role == self.MODERATOR
 
     class Meta:
         ordering = ('id',)
@@ -105,6 +102,7 @@ class Categories(models.Model):
     )
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
@@ -127,6 +125,7 @@ class Genres(models.Model):
     )
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -140,7 +139,7 @@ class Title(models.Model):
         max_length=200,
         db_index=True,
     )
-    year = models.IntegerField(
+    year = models.PositiveIntegerField(
         'год',
         validators=(validate_year,),
     )
@@ -165,6 +164,7 @@ class Title(models.Model):
     )
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
@@ -212,11 +212,11 @@ class Review(models.Model):
         verbose_name='автор',
         db_constraint=False,
     )
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         'оценка',
         validators=(
-            MinValueValidator(1),
-            MaxValueValidator(10),
+            MinValueValidator(MINIMAL_VALID),
+            MaxValueValidator(MAXIMAL_VALID),
         ),
         error_messages={'validators': 'Оценка от 1 до 10!'},
     )
@@ -270,4 +270,4 @@ class Comment(models.Model):
         verbose_name_plural = 'Комментарии'
 
     def __str__(self):
-        return self.text
+        return self.text[:LEN_TEXT]
