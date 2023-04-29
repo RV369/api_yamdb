@@ -1,7 +1,8 @@
 import csv
 
-from api_yamdb.settings import PATH
 from django.core.management.base import BaseCommand
+
+from api_yamdb.settings import PATH
 from reviews.models import (
     Categories,
     Comment,

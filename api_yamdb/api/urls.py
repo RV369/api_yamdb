@@ -1,6 +1,7 @@
-from api.views import UsersApiViewSet, get_sugnup, get_token
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+
+from api.views import UsersApiViewSet, get_sugnup, get_token
 from reviews.views import (
     CategoriesViewSet,
     CommentViewSet,
