@@ -7,8 +7,6 @@ from django.dispatch import receiver
 
 from .validators import validate_username, validate_year
 
-MINIMAL_VALID = 1
-MAXIMAL_VALID = 10
 LEN_TEXT = 15
 
 
@@ -142,6 +140,7 @@ class Title(models.Model):
     year = models.PositiveIntegerField(
         'год',
         validators=(validate_year,),
+        db_index=True,
     )
     category = models.ForeignKey(
         Categories,
@@ -195,6 +194,8 @@ class TitleGenre(models.Model):
 
 
 class Review(models.Model):
+    MIN_SCORE = 1
+    MAX_SCORE = 10
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -215,8 +216,8 @@ class Review(models.Model):
     score = models.PositiveSmallIntegerField(
         'оценка',
         validators=(
-            MinValueValidator(MINIMAL_VALID),
-            MaxValueValidator(MAXIMAL_VALID),
+            MinValueValidator(MIN_SCORE),
+            MaxValueValidator(MAX_SCORE),
         ),
         error_messages={'validators': 'Оценка от 1 до 10!'},
     )
