@@ -107,7 +107,7 @@ class Categories(models.Model):
         verbose_name_plural = 'Категории'
 
     def __str__(self):
-        return f'{self.name} {self.name}'
+        return f'{self.name}'
 
 
 class Genres(models.Model):
@@ -130,7 +130,7 @@ class Genres(models.Model):
         verbose_name_plural = 'Жанры'
 
     def __str__(self):
-        return f'{self.name} {self.name}'
+        return f'{self.name}'
 
 
 class Title(models.Model):
@@ -238,7 +238,7 @@ class Review(models.Model):
         ordering = ('pub_date',)
 
     def __str__(self):
-        return self.text
+        return self.text[:LEN_TEXT]
 
 
 class Comment(models.Model):
@@ -266,6 +266,7 @@ class Comment(models.Model):
     )
 
     class Meta:
+        ordering = ('-pub_date',)
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 
